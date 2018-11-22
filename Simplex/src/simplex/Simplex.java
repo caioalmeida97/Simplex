@@ -4,15 +4,50 @@ import java.util.Scanner;
 
 public class Simplex {
 
+    static Scanner s = new Scanner(System.in);
+
     public static void main(String[] args) {
+//        double[][] table2 = {
         // z x1 x2 xf1 xf2 xf3 b
-        double[][] table = {
-            {1, -3, -5, 0, 0, 0, 0},
-            {0, 2, 4, 1, 0, 0, 10},
-            {0, 6, 1, 0, 1, 0, 20},
-            {0, 1, -1, 0, 0, 1, 30}};
-        
+//            {1, -3, -5, 0, 0, 0, 0},
+//            {0, 2, 4, 1, 0, 0, 10},
+//            {0, 6, 1, 0, 1, 0, 20},
+//            {0, 1, -1, 0, 0, 1, 30}};
+
+        double[][] table = requestValues();
+        printTable(table);
         simplex(table);
+    }
+
+    public static double[][] requestValues() {
+        System.out.print("Insira o número de variáveis de decisão: ");
+        int variables = s.nextInt();
+        System.out.print("Insira o número de restrições: ");
+        int restrictions = s.nextInt();
+
+        double[][] table = new double[restrictions + 1][variables + restrictions + 2];
+        fillTable(table, variables, restrictions);
+        return table;
+    }
+
+    public static void fillTable(double[][] table, int variables, int restrictions) {
+        table[0][0] = 1;
+        for (int i = 0; i <= restrictions; i++) {
+            if (i == 0) {
+                System.out.println("Digite a função objetivo: ");
+            } else {
+                System.out.printf("Digite a restrição de número %d:\n", i);
+                table[i][variables + i] = 1;
+            }
+            for (int j = 1; j <= variables; j++) {
+                System.out.printf("x%d: ", j);
+                table[i][j] = s.nextDouble();
+            }
+            if (i > 0) { 
+                System.out.print("b: ");
+                table[i][table[0].length - 1] = s.nextDouble();
+            }
+        }
     }
 
     public static void printTable(double[][] table) {
@@ -30,7 +65,7 @@ public class Simplex {
         }
     }
 
-    public static boolean greatSolution(double[] line) {
+    private static boolean greatSolution(double[] line) {
         for (int i = 0; i < line.length; i++) {
             if (line[i] < 0) {
                 return false;
